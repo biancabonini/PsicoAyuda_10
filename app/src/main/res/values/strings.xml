@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PsicoAyuda</string>
+    <string name="tv0">Bienvenido/a a PsicoAyuda</string>
+    <string name="tv1">Ingrese el codigo recibido por sms</string>
+    <string name="tv2">Ingrese el numero de telefono</string>
+    <string name="verificar">verificar</string>
+    <string name="enviar">Enviar</string>
+    <string name="LogOut">LogOut</string>
 </resources>
