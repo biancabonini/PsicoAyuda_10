@@ -1,73 +1,108 @@
 package com.example.psicoayuda;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import com.andrognito.patternlockview.PatternLockView;
+import com.andrognito.patternlockview.listener.PatternLockViewListener;
+import com.andrognito.patternlockview.utils.PatternLockUtils;
+
+import java.util.List;
+
+import io.paperdb.Paper;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button button_send;
-    private Button button_verify;
-    private EditText phone;
-    private EditText code_sms;
-
+    String save_pattern_key = "pattern_code";
+    String final_pattern = "";
+    PatternLockView mPatternLockView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
 
-
-<<<<<<< HEAD
-=======
-    //Metodo que actua como Listener de los eventos que ocurren en los componentes graficos de la activty
-    private View.OnClickListener botonesListeners = new View.OnClickListener()
-    {
-
-        public void onClick(View v)
+        Paper.init(this);
+        final String save_pattern = Paper.book().read(save_pattern_key);
+        if(save_pattern != null && !save_pattern.equals("null"))
         {
-            Intent verif;
+            setContentView(R.layout.activity_segundo);
+            mPatternLockView = (PatternLockView)findViewById(R.id.pattern_lock_view);
+            mPatternLockView.addPatternLockListener(new PatternLockViewListener() {
+                @Override
+                public void onStarted() {
 
-            //Se determina que componente genero un evento
-            switch (v.getId())
-            {
-                //Si se ocurrio un evento en el boton OK
-                case R.id.enviar:
+                }
 
+                @Override
+                public void onProgress(List<PatternLockView.Dot> progressPattern) {
 
-                   //verif=new Intent(MainActivity.this,ActivityLogin.class);
+                }
 
-                    //Se le agrega al intent los parametros que se le quieren pasar a la activyt principal
-                    //cuando se lanzado
-                    //intent.putExtra("textoOrigen",activity_login.getText().toString());
-
-                    //se inicia la activity principal
-                    //startActivity(verif);
-                    break;
-
-                case R.id.verificar:
-
-                    verif=new Intent(MainActivity.this,ActivityLogin.class);
-                    startActivity(verif);
-                default:
-                    Toast.makeText(getApplicationContext(),"Error en Listener de botones",Toast.LENGTH_LONG).show();
-            }
+                @Override
+                public void onComplete(List<PatternLockView.Dot> pattern) {
+                    final_pattern = PatternLockUtils.patternToString(mPatternLockView,pattern);
+                    if(final_pattern.equals(save_pattern)){
+                        Toast.makeText(MainActivity.this, "Password Correct!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this,SegundoActivity.class);
+                        startActivity(intent);
 
 
+                    }else{ Toast.makeText(MainActivity.this, "Password Incorrecta!", Toast.LENGTH_SHORT).show();}
+
+
+                }
+
+                @Override
+                public void onCleared() {
+
+                }
+            });
         }
-    };
+        else
+        {
 
-    public void verificar(View view)
-    {
-        Intent verif = new Intent(this,SegundoActivity.class);
-        startActivity(verif);
+            setContentView(R.layout.activity_main);
+            mPatternLockView = (PatternLockView)findViewById(R.id.pattern_lock_view);
+            mPatternLockView.addPatternLockListener(new PatternLockViewListener() {
+                @Override
+                public void onStarted() {
+
+                }
+
+                @Override
+                public void onProgress(List<PatternLockView.Dot> progressPattern) {
+
+                }
+
+                @Override
+                public void onComplete(List<PatternLockView.Dot> pattern) {
+                    final_pattern = PatternLockUtils .patternToString(mPatternLockView,pattern);
+
+                }
+
+                @Override
+                public void onCleared() {
+
+                }
+            });
+
+
+
+
+            Button btnSetup = (Button)findViewById(R.id.btnSetearPatron);
+            btnSetup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Paper.book().write(save_pattern_key, final_pattern);
+                    Toast.makeText(MainActivity.this, "Save pattern okay!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this,SegundoActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
     }
->>>>>>> parent of 5e56098 (mensaje con lo que agregaste)
-
 }
