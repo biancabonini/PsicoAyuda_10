@@ -32,5 +32,7 @@ dependencies {
     implementation 'com.andrognito.patternlockview:patternlockview:1.0.0'
     implementation 'com.andrognito.patternlockview:patternlockview-reactive:1.0.0'
     implementation 'io.github.pilgr:paperdb:2.7.1'
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    implementation "android.arch.lifecycle:viewmodel:1.1.0"
 
 }

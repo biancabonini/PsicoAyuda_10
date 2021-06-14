@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.example.psicoayuda.ui.login.LoginActivity;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         Paper.init(this);
         final String save_pattern = Paper.book().read(save_pattern_key);
+
         if(save_pattern != null && !save_pattern.equals("null"))
         {
             setContentView(R.layout.activity_segundo);
@@ -42,12 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+
                 @Override
                 public void onComplete(List<PatternLockView.Dot> pattern) {
                     final_pattern = PatternLockUtils.patternToString(mPatternLockView,pattern);
                     if(final_pattern.equals(save_pattern)){
                         Toast.makeText(MainActivity.this, "Password Correct!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this,SegundoActivity.class);
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
 
 
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 }
+
 
                 @Override
                 public void onCleared() {
