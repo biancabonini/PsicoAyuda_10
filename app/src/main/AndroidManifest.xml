@@ -17,6 +17,7 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login"></activity>
+
         <activity android:name=".SegundoActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity">

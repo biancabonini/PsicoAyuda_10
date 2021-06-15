@@ -47,13 +47,12 @@ public class SegundoActivity extends AppCompatActivity {
                 public void onComplete(List<PatternLockView.Dot> pattern) {
                     final_pattern = PatternLockUtils.patternToString(mPatternLockView,pattern);
                     if(final_pattern.equals(save_pattern)){
-                        Toast.makeText(SegundoActivity.this, "Password Correct!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SegundoActivity.this, "Contraseña Correcta!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(SegundoActivity.this, LoginActivity.class);
                         startActivity(intent);
 
 
-                    }else{ Toast.makeText(SegundoActivity.this, "Password Incorrecta!", Toast.LENGTH_SHORT).show();}
-
+                    }else{ Toast.makeText(SegundoActivity.this, "Contraseña Incorrecta!", Toast.LENGTH_SHORT).show();}
 
                 }
 

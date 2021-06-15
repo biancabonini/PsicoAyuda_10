@@ -5,6 +5,8 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -35,10 +37,11 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String URL_LOGIN = "";
+    private static final String URL_LOGIN = "http://so-unlam.net.ar/api/api/login";
 
     public IntentFilter filter;
-    //private receptorOperacion receiver = new receptorOperacion();
+
+    private Receptor receiver = new Receptor();
 
     private LoginViewModel loginViewModel;
 
@@ -128,23 +131,25 @@ public class LoginActivity extends AppCompatActivity {
         });
         */
 
+        configurarBroadcastReceiver();
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /*loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(emailEditText.getText().toString(),
                         passwordEditText.getText().toString());*/
-                JSONObject JSONsignUp = new JSONObject();
+                JSONObject JSONsignIn = new JSONObject();
                 try{
-                    JSONsignUp.put("email", emailEditText.getText().toString());
-                    JSONsignUp.put("password", passwordEditText.getText().toString());
+                    JSONsignIn.put("email", emailEditText.getText().toString());
+                    JSONsignIn.put("password", passwordEditText.getText().toString());
 
-                    Intent signUpIntent = new Intent(LoginActivity.this, ServicesHttp_POST.class);
+                    Intent signInIntent = new Intent(LoginActivity.this, ServicesHttp_POST.class);
 
-                    signUpIntent.putExtra("url", URL_LOGIN);
-                    signUpIntent.putExtra("datosJson", JSONsignUp.toString());
+                    signInIntent.putExtra("url", URL_LOGIN);
+                    signInIntent.putExtra("datosJson", JSONsignIn.toString());
 
-                    startService(signUpIntent);
+                    startService(signInIntent);
 
                 }
                 catch (JSONException js){
@@ -176,4 +181,47 @@ public class LoginActivity extends AppCompatActivity {
     }
 
      */
+    private void configurarBroadcastReceiver(){
+        filter = new IntentFilter("com.example.psicoayuda.intent.action.RESPUESTA_OPERACION");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(receiver,filter);
+    }
+
+    private class Receptor extends BroadcastReceiver
+    {
+
+        public void onReceive(Context context, Intent intent){
+            try
+            {
+                String datosJSON = intent.getStringExtra("datosJson");
+                JSONObject datosJson = new JSONObject(datosJSON);
+
+                //resultEditText.setText(datosJSON);
+                Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
+                String token = datosJson.getString("token");
+                String resultado = datosJson.getString("success");
+                String token_refresh = datosJson.getString("token_refresh");
+                //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+
+                /*if (resultado == "true")
+                {
+                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                }
+                if (resultado == "true") {*/
+                Intent AppPrincipal = new Intent(LoginActivity.this, LoginActivity.class);
+                AppPrincipal.putExtra("token", token);
+                startActivity(AppPrincipal);
+                //}
+
+            }
+            catch (JSONException js){
+                js.printStackTrace();
+            }
+        }
+    }
 }

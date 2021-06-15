@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(List<PatternLockView.Dot> pattern) {
                     final_pattern = PatternLockUtils.patternToString(mPatternLockView,pattern);
                     if(final_pattern.equals(save_pattern)){
-                        Toast.makeText(MainActivity.this, "Password Correct!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Contraseña Correcta!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
 
 
-                    }else{ Toast.makeText(MainActivity.this, "Password Incorrecta!", Toast.LENGTH_SHORT).show();}
+                    }else{ Toast.makeText(MainActivity.this, "Contraseña Incorrecta!", Toast.LENGTH_SHORT).show();}
 
 
                 }

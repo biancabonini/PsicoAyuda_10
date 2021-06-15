@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.psicoayuda.ui.login.LoginActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -26,9 +28,11 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView resultEditText;
     public IntentFilter filter;
     private Receptor receiver = new Receptor();
+    public String resultado;
+    public String token;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
@@ -40,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
         final EditText dniEditText = findViewById(R.id.user_dni);
         final Button signUpButton = findViewById(R.id.sign_up);
 
+
         configurarBroadcastReceiver();
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +52,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //TODO: pegarle a la API de registrar
                 JSONObject JSONsignUp = new JSONObject();
-                try{
+                try {
 
                     JSONsignUp.put("env", txtEnvironment);
                     JSONsignUp.put("name", nameEditText.getText().toString());
@@ -65,8 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     startService(signUpIntent);
 
-                }
-                catch (JSONException js){
+                } catch (JSONException js) {
                     js.printStackTrace();
                 }
 
@@ -74,7 +78,9 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
 
+
     }
+
 
     private void configurarBroadcastReceiver(){
         filter = new IntentFilter("com.example.psicoayuda.intent.action.RESPUESTA_OPERACION");
@@ -82,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
         registerReceiver(receiver,filter);
     }
 
-    public class Receptor extends BroadcastReceiver
+    private class Receptor extends BroadcastReceiver
     {
 
         public void onReceive(Context context, Intent intent){
@@ -93,8 +99,38 @@ public class SignUpActivity extends AppCompatActivity {
                 JSONObject datosJson = new JSONObject(datosJSON);
 
                 resultEditText.setText(datosJSON);
-                Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
-                String token = datosJson.getString("Token");
+                //Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
+                token = datosJson.getString("token");
+                resultado = datosJson.getString("success");
+                //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+
+                /*if (resultado == "true")
+                {
+                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                }
+                if (resultado == "true") {*/
+                    /*Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    loginIntent.putExtra("token", token);
+                    startActivity(loginIntent);
+                Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(loginIntent);*/
+                //}
+                if (resultado == "true")
+                {
+                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
+                    Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                }
+
             }
             catch (JSONException js){
                 js.printStackTrace();
@@ -102,4 +138,5 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 }
+
 

@@ -26,8 +26,12 @@ public class ServicesHttp_POST extends IntentService {
     public void onCreate() {
         super.onCreate();
 
-        //Log.i("LOGUEO_SERVICE","Service onCreate()");
     }
+
+    /*@Override
+    public void onDestroy() {
+        super.onDestroy();
+    }*/
 
     protected void onHandleIntent(Intent intent) {
         try {
