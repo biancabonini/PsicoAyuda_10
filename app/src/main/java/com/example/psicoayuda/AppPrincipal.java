@@ -16,6 +16,8 @@ import android.hardware.SensorManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.json.JSONObject;
 
 import java.security.Principal;
@@ -31,6 +33,7 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
     boolean sacudido = false;
+    //private db = FirebaseFirestore.getinstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
         final TextView resText = findViewById(R.id.textView2);
         resText.setText(token);
 
-        String asunto= asuntoText.getText().toString();
+        final String asunto= asuntoText.getText().toString();
         String descripcion= descripcionText.getText().toString();
 
         Button btnSetup = (Button)findViewById(R.id.enviar);
@@ -62,8 +65,13 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(AppPrincipal.this,SegundoActivity.class);
-                //startActivity(intent);
+          /*      db.collection ("users").document(asunto)(
+                        hashMapOf(
+                        "asunto" to asuntoText.text.toString(),
+                        "decripcion" to descripcionText.text.toString())
+
+
+            )*/
             }
         });
 
