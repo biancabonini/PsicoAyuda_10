@@ -26,11 +26,11 @@
         <activity android:name=".SegundoActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity">
-        <!--    <intent-filter>
+           <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
         </activity>
         <service
             android:enabled="true"
@@ -45,11 +45,11 @@
     <activity android:name=".PreguntasActivity"
         android:screenOrientation="portrait"
         >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <!--  <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-</application>
-</manifest>
+             <category android:name="android.intent.category.LAUNCHER" />
+         </intent-filter> -->
+     </activity>
+ </application>
+ </manifest>
