@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "1088107195553",
-    "project_id": "psicoayuda-dda50",
-    "storage_bucket": "psicoayuda-dda50.appspot.com"
+    "project_number": "153876579724",
+    "project_id": "psico-d9c76",
+    "storage_bucket": "psico-d9c76.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1088107195553:android:6bd540851662f00f2b14e0",
+        "mobilesdk_app_id": "1:153876579724:android:336af8b2371e1e874f02a9",
         "android_client_info": {
           "package_name": "com.example.psicoayuda"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1088107195553-5sc9fkckbirak046lfd533u5uv0bm9je.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.psicoayuda",
-            "certificate_hash": "3c3b0fa32c1c6ff53eb7c70e20ebb3fd2e17a3da"
-          }
-        },
-        {
-          "client_id": "1088107195553-mpe08bq5b75fndf8lcvj5p9v8qecq7uk.apps.googleusercontent.com",
+          "client_id": "153876579724-0e37n53gd1gkf3uqtpbpq3b5fc27fgad.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyClvq7JgGq2PkHhbr5dIEVyiLJNWSyUWiU"
+          "current_key": "AIzaSyCs6uLC8N5y5hSE6olPKeiff5UOj3xL5T0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1088107195553-mpe08bq5b75fndf8lcvj5p9v8qecq7uk.apps.googleusercontent.com",
+              "client_id": "153876579724-0e37n53gd1gkf3uqtpbpq3b5fc27fgad.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
