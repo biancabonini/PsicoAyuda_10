@@ -22,7 +22,7 @@ import org.w3c.dom.Text;
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String URL_SIGN_UP = "http://so-unlam.net.ar/api/api/register";
-    private String txtEnvironment = "TEST";
+    private String txtEnvironment = "PROD";
     private Integer comision = 2900;
     private Integer grupo = 10;
     private TextView resultEditText;
@@ -30,6 +30,8 @@ public class SignUpActivity extends AppCompatActivity {
     private Receptor receiver = new Receptor();
     public String resultado;
     public String token;
+    public String dni;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
         final EditText dniEditText = findViewById(R.id.user_dni);
         final Button signUpButton = findViewById(R.id.sign_up);
 
-
+        dni = lastnameEditText.getText().toString();
         configurarBroadcastReceiver();
 
         signUpButton.setOnClickListener(new View.OnClickListener() {

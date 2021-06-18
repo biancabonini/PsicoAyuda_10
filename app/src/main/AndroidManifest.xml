@@ -26,7 +26,7 @@
         <activity android:name=".SegundoActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity">
-           <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -45,7 +45,7 @@
     <activity android:name=".PreguntasActivity"
         android:screenOrientation="portrait"
         >
-        <!--  <intent-filter>
+        <!-- <intent-filter>
              <action android:name="android.intent.action.MAIN" />
 
              <category android:name="android.intent.category.LAUNCHER" />

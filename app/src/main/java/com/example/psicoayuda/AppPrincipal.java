@@ -34,6 +34,8 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
     private static final int SHAKE_THRESHOLD = 600;
     boolean sacudido = false;
     //private db = FirebaseFirestore.getinstance();
+    public String email;
+    public String tokenRefresh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,10 +54,13 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
         acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, acelerometro , SensorManager.SENSOR_DELAY_NORMAL);
 
-        token = getIntent().getExtras().getString("token");
+        Intent receiveLoginIntent = getIntent();
+        token = receiveLoginIntent.getExtras().getString("token1");
+        email = receiveLoginIntent.getExtras().getString("email");
+        tokenRefresh = receiveLoginIntent.getExtras().getString("Token_rfrs");
 
         final TextView resText = findViewById(R.id.textView2);
-        resText.setText(token);
+        resText.setText(email);
 
         final String asunto= asuntoText.getText().toString();
         String descripcion= descripcionText.getText().toString();
@@ -114,6 +119,7 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
 
                 if (speed > SHAKE_THRESHOLD) {
                     sacudido = true;
+                    Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
                 }
 
                 last_x = x;

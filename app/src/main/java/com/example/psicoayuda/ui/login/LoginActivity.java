@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.psicoayuda.AppPrincipal;
 import com.example.psicoayuda.MainActivity;
 import com.example.psicoayuda.R;
 import com.example.psicoayuda.SegundoActivity;
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private Receptor receiver = new Receptor();
 
     private LoginViewModel loginViewModel;
-
+    public String email;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
@@ -144,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                     JSONsignIn.put("email", emailEditText.getText().toString());
                     JSONsignIn.put("password", passwordEditText.getText().toString());
 
+                    email = emailEditText.getText().toString();
                     Intent signInIntent = new Intent(LoginActivity.this, ServicesHttp_POST.class);
 
                     signInIntent.putExtra("url", URL_LOGIN);
@@ -213,9 +217,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
                 }
                 if (resultado == "true") {*/
-                Intent AppPrincipal = new Intent(LoginActivity.this, LoginActivity.class);
-                AppPrincipal.putExtra("token", token);
-                startActivity(AppPrincipal);
+                Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
+                goToAppPrincipal.putExtra("token1", token);
+                goToAppPrincipal.putExtra("email", email);
+                goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
+                startActivity(goToAppPrincipal);
                 //}
 
             }

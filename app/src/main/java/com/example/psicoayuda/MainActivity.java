@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Paper.book().write(save_pattern_key, final_pattern);
-                    Toast.makeText(MainActivity.this, "Save pattern okay!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "El patrón se guardó correctamente!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this,SegundoActivity.class);
                     startActivity(intent);
                 }
