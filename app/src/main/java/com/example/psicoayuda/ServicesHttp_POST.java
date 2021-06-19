@@ -17,6 +17,9 @@ public class ServicesHttp_POST extends IntentService {
     private Integer HTTP_OK = 200;
     private Integer HTTP_CREATED = 201;
     private String NOT_OK = "ERROR";
+    private String action = "";
+    private String resGetAction;
+    private String token;
 
     public ServicesHttp_POST() {
         super("ServicesHttp_POST");
@@ -34,7 +37,16 @@ public class ServicesHttp_POST extends IntentService {
     }*/
 
     protected void onHandleIntent(Intent intent) {
+
         try {
+            resGetAction = intent.getAction();
+            if(resGetAction == "com.example.psicoayuda.intent.action.RESPUESTA_OPERACION"){
+                action = "com.example.psicoayuda.intent.action.RESPUESTA_OPERACION";
+            }
+            else if(resGetAction == "REGISTRAR_EVENTO"){
+                action = "com.example.psicoayuda.intent.action.REGISTRAR_EVENTO";
+                token = intent.getExtras().getString("tokenAP");
+            }
             String url = intent.getExtras().getString("url");
             JSONObject datosJson = new JSONObject(intent.getExtras().getString(("datosJson")));
             ejecutarPost(url, datosJson);
@@ -53,7 +65,7 @@ public class ServicesHttp_POST extends IntentService {
             return;
         }
 
-        Intent i = new Intent("com.example.psicoayuda.intent.action.RESPUESTA_OPERACION");
+        Intent i = new Intent(action);
         i.putExtra("datosJson",result);
         sendBroadcast(i);
 
@@ -72,6 +84,10 @@ public class ServicesHttp_POST extends IntentService {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setConnectTimeout(5000);
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                if(resGetAction == "REGISTRAR_EVENTO"){
+                    urlConnection.setRequestProperty("Authorization", "Bearer " + token);
+                }
 
                 DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
 

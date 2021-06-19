@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +32,6 @@ public class SignUpActivity extends AppCompatActivity {
     private Receptor receiver = new Receptor();
     public String resultado;
     public String token;
-    public String dni;
 
 
     @Override
@@ -46,7 +47,6 @@ public class SignUpActivity extends AppCompatActivity {
         final EditText dniEditText = findViewById(R.id.user_dni);
         final Button signUpButton = findViewById(R.id.sign_up);
 
-        dni = lastnameEditText.getText().toString();
         configurarBroadcastReceiver();
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +70,16 @@ public class SignUpActivity extends AppCompatActivity {
                     signUpIntent.putExtra("url", URL_SIGN_UP);
                     signUpIntent.putExtra("datosJson", JSONsignUp.toString());
 
-                    startService(signUpIntent);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+                    if (networkInfo.isConnected()) {
+                        resultEditText.setText("Está conectado a internet");
+                        startService(signUpIntent);
+                    } else {
+                        resultEditText.setText("No hay conexión a internet");
+                    }
+
 
                 } catch (JSONException js) {
                     js.printStackTrace();
@@ -78,9 +87,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
 

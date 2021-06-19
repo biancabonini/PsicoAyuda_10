@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -46,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     public String email;
+    private TextView resultEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +156,18 @@ public class LoginActivity extends AppCompatActivity {
                     signInIntent.putExtra("url", URL_LOGIN);
                     signInIntent.putExtra("datosJson", JSONsignIn.toString());
 
-                    startService(signInIntent);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+                    if (networkInfo.isConnected()) {
+                        //resultEditText.setText("Está conectado a internet");
+                        Toast.makeText(getApplicationContext(),"Está conectado a internet",Toast.LENGTH_LONG).show();
+                        startService(signInIntent);
+                    } else {
+                        //resultEditText.setText("No hay conexión a internet");
+                        Toast.makeText(getApplicationContext(),"No está conectado a internet",Toast.LENGTH_LONG).show();
+                    }
+
 
                 }
                 catch (JSONException js){
@@ -197,10 +211,11 @@ public class LoginActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent){
             try
             {
+                resultEditText = (TextView) findViewById(R.id.txtResultado2);
                 String datosJSON = intent.getStringExtra("datosJson");
                 JSONObject datosJson = new JSONObject(datosJSON);
 
-                //resultEditText.setText(datosJSON);
+                resultEditText.setText(datosJSON);
                 Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
                 String token = datosJson.getString("token");
                 String resultado = datosJson.getString("success");
@@ -208,21 +223,20 @@ public class LoginActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
                 //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
 
-                /*if (resultado == "true")
+                if (resultado == "true")
                 {
-                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Se ha logueado correctamente",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
                     Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
                 }
-                if (resultado == "true") {*/
+
                 Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
                 goToAppPrincipal.putExtra("token1", token);
                 goToAppPrincipal.putExtra("email", email);
                 goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
                 startActivity(goToAppPrincipal);
-                //}
 
             }
             catch (JSONException js){
