@@ -21,13 +21,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.objectweb.asm.Label;
 
-public class PreguntasActivity extends AppCompatActivity {
+public class PreguntasActivity extends AppCompatActivity implements SensorEventListener {
 
-    private SensorManager sensorManager;
     private Sensor giroscopio;
-    private boolean rotacion=false;
+    private SensorManager sensorManager;
+    private long lastUpdate = 0;
+    private float last_x, last_y, last_z;
+    private static final int SHAKE_THRESHOLD = 600;
+    boolean sacudido = false;
+    private  int contadorPreguntas;
     private String respuesta="";
-    int contadorPreguntas;
+
     private static final String URL_REGISTRAR_EVENTO = "http://so-unlam.net.ar/api/api/event";
     private static final String environment = "PROD";
     private static final String typeEvent = "Lectura del sensor giroscopio";
@@ -37,63 +41,31 @@ public class PreguntasActivity extends AppCompatActivity {
     private TextView resultEditText;
     private String action = "REGISTRAR_EVENTO";
 
+    String preguntas[] = {"pregunta1","pregunta2","pregunta3"};
+    private TextView leyenda;
+    private TextView pregunta;
+    private TextView resultado;
+    float lastZ=0;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_preguntas);
-        final TextView leyenda = findViewById(R.id.leyenda);
-        final TextView pregunta = findViewById(R.id.pregunta);
+        leyenda = findViewById(R.id.leyenda);
+        pregunta = findViewById(R.id.pregunta);
+        resultado = findViewById(R.id.txtResultado);
 
-        String preguntas[] = {"pregunta1","pregunta2","pregunta3"};
-
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         giroscopio = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        sensorManager.registerListener(this, giroscopio , 3000000);
         contadorPreguntas = 0;
 
         pregunta.setText("pregunta");
 
         configurarBroadcastReceiver();
 
-        SensorEventListener sensorGiroscopioListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-                if(sensorEvent.values[2] > 0.5f) { // anticlockwise
-                    rotacion=true;
-                    respuesta="Si";
-                    String descrip=Float.toString (sensorEvent.values[2]);
-                    JSONObject RegistarEvtJson = new JSONObject();
-                    try {
-                        RegistarEvtJson.put("env", environment);
-                        RegistarEvtJson.put("type_events",typeEvent);
-                        RegistarEvtJson.put("description", descrip);
-                        Intent RegistrarEvento = new Intent(PreguntasActivity.this, ServicesHttp_POST.class);
-                        RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
-                        RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
-                        RegistrarEvento.putExtra("action", action);
-                        startService(RegistrarEvento);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else if(sensorEvent.values[2] < -0.5f) { // clockwise
-                    rotacion=true;
-                    respuesta="No";
-                }
-
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-
-        };
-
-        while(rotacion &&  (contadorPreguntas < preguntas.length) ){
-                rotacion=false;
-                pregunta.setText(preguntas[contadorPreguntas]);
-                contadorPreguntas++;
-        }
 
 
 
@@ -125,11 +97,11 @@ public class PreguntasActivity extends AppCompatActivity {
 
                 if (resultado == "true")
                 {
-                    Toast.makeText(getApplicationContext(),"Se ha logueado correctamente",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Se registró la lectura correctamente",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"No se registró la lectura correctamente",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -139,7 +111,59 @@ public class PreguntasActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor mySensor = event.sensor;
 
-    };
+        if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+
+            if(contadorPreguntas>2){
+                Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
+                //Intent intent = new Intent(PreguntasActivity.this,AppPrincipal.class);
+                //startActivity(intent);
+            }else{
+                if((event.values[2]) > 0.5f) { // anticlockwise
+                    respuesta="Si";
+                    pregunta.setText(preguntas[contadorPreguntas]);
+                    contadorPreguntas++;
+                    Toast.makeText(PreguntasActivity.this, "Respondiste SI", Toast.LENGTH_SHORT).show();
+                    String descrip=Float.toString (event.values[2]);
+                    JSONObject RegistarEvtJson = new JSONObject();
+                    try {
+                        RegistarEvtJson.put("env", environment);
+                        RegistarEvtJson.put("type_events",typeEvent);
+                        RegistarEvtJson.put("description", descrip);
+                        Intent RegistrarEvento = new Intent(PreguntasActivity.this, ServicesHttp_POST.class);
+                        RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
+                        RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
+                        RegistrarEvento.putExtra("action", action);
+                        startService(RegistrarEvento);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else if((event.values[1]) < -0.5f) { // clockwise
+                    respuesta="No";
+                    pregunta.setText(preguntas[contadorPreguntas]);
+                    contadorPreguntas++;
+                    Toast.makeText(PreguntasActivity.this, "Respondiste NO", Toast.LENGTH_SHORT).show();
+                }
+                resultado.setText(respuesta);
+            }
+
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+
+};
 
 
