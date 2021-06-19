@@ -32,6 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Receptor receiver = new Receptor();
     public String resultado;
     public String token;
+    private static final String action = "RESPUESTA_OPERACION";
 
 
     @Override
@@ -69,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     signUpIntent.putExtra("url", URL_SIGN_UP);
                     signUpIntent.putExtra("datosJson", JSONsignUp.toString());
+                    signUpIntent.putExtra("action", action);
 
                     ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

@@ -35,6 +35,7 @@ public class PreguntasActivity extends AppCompatActivity {
     public IntentFilter filter;
     private Receptor receiver = new Receptor();
     private TextView resultEditText;
+    private String action = "REGISTRAR_EVENTO";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class PreguntasActivity extends AppCompatActivity {
                         Intent RegistrarEvento = new Intent(PreguntasActivity.this, ServicesHttp_POST.class);
                         RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
                         RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
+                        RegistrarEvento.putExtra("action", action);
                         startService(RegistrarEvento);
                     } catch (JSONException e) {
                         e.printStackTrace();

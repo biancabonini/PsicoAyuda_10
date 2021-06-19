@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     public String email;
     private TextView resultEditText;
+    private static final String action = "RESPUESTA_OPERACION";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     signInIntent.putExtra("url", URL_LOGIN);
                     signInIntent.putExtra("datosJson", JSONsignIn.toString());
+                    signInIntent.putExtra("action", action);
 
                     ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

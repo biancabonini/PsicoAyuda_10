@@ -17,8 +17,8 @@ public class ServicesHttp_POST extends IntentService {
     private Integer HTTP_OK = 200;
     private Integer HTTP_CREATED = 201;
     private String NOT_OK = "ERROR";
-    private String action = "";
-    private String resGetAction;
+    public String action = "";
+    public String resGetAction;
     private String token;
 
     public ServicesHttp_POST() {
@@ -39,11 +39,11 @@ public class ServicesHttp_POST extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         try {
-            resGetAction = intent.getAction();
-            if(resGetAction == "com.example.psicoayuda.intent.action.RESPUESTA_OPERACION"){
+            resGetAction = intent.getExtras().getString("action");
+            if(resGetAction.equals("RESPUESTA_OPERACION")){
                 action = "com.example.psicoayuda.intent.action.RESPUESTA_OPERACION";
             }
-            else if(resGetAction == "REGISTRAR_EVENTO"){
+            else if(resGetAction.equals("REGISTRAR_EVENTO")){
                 action = "com.example.psicoayuda.intent.action.REGISTRAR_EVENTO";
                 token = intent.getExtras().getString("tokenAP");
             }
@@ -85,7 +85,7 @@ public class ServicesHttp_POST extends IntentService {
                 urlConnection.setConnectTimeout(5000);
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-                if(resGetAction == "REGISTRAR_EVENTO"){
+                if(resGetAction.equals("REGISTRAR_EVENTO")){
                     urlConnection.setRequestProperty("Authorization", "Bearer " + token);
                 }
 
