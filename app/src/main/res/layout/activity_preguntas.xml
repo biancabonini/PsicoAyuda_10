@@ -32,14 +32,13 @@
             android:id="@+id/leyenda"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rota el telefono hacia la izquierda para responder NO o hacia la derecha para responder SI"
+            android:text="Rota el telefono hacia atras o adelante para responder NO o hacia los costados para responder SI"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.062"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.271" />
+            app:layout_constraintVertical_bias="0.105" />
 
         <TextView
             android:id="@+id/pregunta"

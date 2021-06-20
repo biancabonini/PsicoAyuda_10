@@ -59,8 +59,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         giroscopio = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorManager.registerListener(this, giroscopio , 3000000);
-        //ver si con esa configuración funciona
-        //sensorManager.registerListener(this, giroscopio , sensorManager.SENSOR_DELAY_UI);
+
         contadorPreguntas = 0;
 
         pregunta.setText("pregunta");
@@ -129,9 +128,8 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
             }else{
                 if((event.values[2]) > 0.5f) { // anticlockwise
                     respuesta="Si";
-                    pregunta.setText(preguntas[contadorPreguntas]);
+                    pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
                     contadorPreguntas++;
-                    Toast.makeText(PreguntasActivity.this, "Respondiste SI", Toast.LENGTH_SHORT).show();
                     String descrip=Float.toString (event.values[2]);
                     JSONObject RegistarEvtJson = new JSONObject();
                     try {
@@ -146,11 +144,10 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else if((event.values[1]) < -0.5f) { // clockwise
+                } else if((event.values[0]) < -0.5f) { // clockwise
                     respuesta="No";
-                    pregunta.setText(preguntas[contadorPreguntas]);
+                    pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
                     contadorPreguntas++;
-                    Toast.makeText(PreguntasActivity.this, "Respondiste NO", Toast.LENGTH_SHORT).show();
                 }
                 resultado.setText(respuesta);
             }
