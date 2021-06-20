@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.psicoayuda.R;
@@ -161,6 +160,26 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+    public static class MyAlarmReceiver extends BroadcastReceiver {
+
+        public  MyAlarmReceiver()
+        {
+            super();
+        }
+
+        //Cuando reciba respuesta de la alarma, se ejecutará el PUT para refrescar el Token
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String uri= intent.getStringExtra("uri");
+            String token_refresh = intent.getStringExtra("refresh");
+            Intent  putService = new Intent(context, ServicesHttp_PUT.class);
+            putService.putExtra("tokenPut_rfrsh",token_refresh);
+            putService.putExtra("urlPUT",uri);
+            context.startService(putService);
+
+        }
     }
 
 

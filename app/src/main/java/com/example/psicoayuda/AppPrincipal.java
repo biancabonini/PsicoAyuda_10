@@ -1,5 +1,6 @@
 package com.example.psicoayuda;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Bundle;
-import android.util.ArraySet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,22 +17,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.app.AlarmManager;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.psicoayuda.ui.login.LoginActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
-import io.paperdb.Paper;
 
 public class AppPrincipal extends AppCompatActivity implements SensorEventListener  {
 
@@ -54,6 +49,9 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
     String valorY;
     String valorZ;
 
+    private static final String URL_REFRESH_TOKEN = "http://so-unlam.net.ar/api/api/refresh";
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -70,6 +68,8 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
         final TextView lecturaX = findViewById(R.id.x);
         final TextView lecturaY= findViewById(R.id.y);
         final TextView lecturaZ = findViewById(R.id.z);
+
+        iniciarServicioRecepctorAlarma();
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         //Se muestran los valores del último cambio del sensor
@@ -179,13 +179,12 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
                     editor.putString("Z", valorZ);
                     editor.commit();
                     Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
+                    Intent intentPreguntas = new Intent(AppPrincipal.this,PreguntasActivity.class);
+                    intentPreguntas.putExtra("tokenPreg",token);
+                    intentPreguntas.putExtra("token_rfrsPreg",tokenRefresh);
+                    intentPreguntas.putExtra("mail",email);
+                    startActivity(intentPreguntas);
                 }
-
-                Intent intentPreguntas = new Intent(AppPrincipal.this,PreguntasActivity.class);
-                intentPreguntas.putExtra("tokenPreg",token);
-                intentPreguntas.putExtra("token_rfrsPreg",tokenRefresh);
-                intentPreguntas.putExtra("mail",email);
-                startActivity(intentPreguntas);
 
                 last_x = x;
                 last_y = y;
@@ -202,5 +201,36 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
     public void publicarConsulta(String asunto, String descripcion){
         Intent intent = new Intent(AppPrincipal.this,SegundoActivity.class);
         startActivity(intent);
+    }
+    public void   iniciarServicioRecepctorAlarma()
+    {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.MyAlarmReceiver.class);
+        intent.putExtra("uri",URL_REFRESH_TOKEN);
+        intent.putExtra("refresh",tokenRefresh);
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        long firstMillis = System.currentTimeMillis();
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP,  firstMillis, AlarmManager.INTERVAL_HALF_HOUR, pIntent);
+    }
+    public static class MyAlarmReceiver extends BroadcastReceiver {
+
+
+        public  MyAlarmReceiver()
+        {
+            super();
+        }
+
+        //Cuando reciba respuesta de la alarma, se ejecutará el PUT para refrescar el Token
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String uri= intent.getStringExtra("uri");
+            String token_refresh = intent.getStringExtra("refresh");
+            Intent  putService = new Intent(context, ServicesHttp_PUT.class);
+            putService.putExtra("tokenPut_rfrsh",token_refresh);
+            putService.putExtra("urlPUT",uri);
+            context.startService(putService);
+
+        }
     }
 }

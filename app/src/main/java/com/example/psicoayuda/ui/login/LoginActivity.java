@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,13 +29,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.psicoayuda.AppPrincipal;
-import com.example.psicoayuda.MainActivity;
 import com.example.psicoayuda.R;
-import com.example.psicoayuda.SegundoActivity;
 import com.example.psicoayuda.ServicesHttp_POST;
+import com.example.psicoayuda.ServicesHttp_PUT;
 import com.example.psicoayuda.SignUpActivity;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     public String email;
     private TextView resultEditText;
     private static final String action = "RESPUESTA_OPERACION";
+    private String token_refresh;
+    private  String token;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,79 +64,6 @@ public class LoginActivity extends AppCompatActivity {
         final Button signUpButton = findViewById(R.id.sign_up);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        /*loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
-            @Override
-            public void onChanged(@Nullable LoginFormState loginFormState) {
-                if (loginFormState == null) {
-                    return;
-                }
-                loginButton.setEnabled(loginFormState.isDataValid());
-                if (loginFormState.getUsernameError() != null) {
-                    emailEditText.setError(getString(loginFormState.getUsernameError()));
-                }
-                if (loginFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
-                }
-            }
-        });
-
-
-
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
-            }
-        });
-
-        TextWatcher afterTextChangedListener = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
-        };
-
-        nameEditText.addTextChangedListener(afterTextChangedListener);
-        lastnameEditText.addTextChangedListener(afterTextChangedListener);
-        dniEditText.addTextChangedListener(afterTextChangedListener);
-        emailEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(emailEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                }
-                return false;
-            }
-        });
-        */
 
         configurarBroadcastReceiver();
 
@@ -190,22 +117,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /*private void updateUiWithUser(LoggedInUserView model) {
-        String welcome =  model.getDisplayName();
-         TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-    }
-
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
-
-     */
     private void configurarBroadcastReceiver(){
         filter = new IntentFilter("com.example.psicoayuda.intent.action.RESPUESTA_OPERACION");
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(receiver,filter);
     }
+
 
     private class Receptor extends BroadcastReceiver
     {
@@ -219,26 +136,25 @@ public class LoginActivity extends AppCompatActivity {
 
                 resultEditText.setText(datosJSON);
                 Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
-                String token = datosJson.getString("token");
+                token = datosJson.getString("token");
                 String resultado = datosJson.getString("success");
-                String token_refresh = datosJson.getString("token_refresh");
+                token_refresh = datosJson.getString("token_refresh");
                 //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
                 //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
 
                 if (resultado == "true")
                 {
                     Toast.makeText(getApplicationContext(),"Se ha logueado correctamente",Toast.LENGTH_LONG).show();
+                    Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
+                    goToAppPrincipal.putExtra("token1", token);
+                    goToAppPrincipal.putExtra("email", email);
+                    goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
+                    startActivity(goToAppPrincipal);
                 }
                 else
                 {
                     Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
                 }
-
-                Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
-                goToAppPrincipal.putExtra("token1", token);
-                goToAppPrincipal.putExtra("email", email);
-                goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
-                startActivity(goToAppPrincipal);
 
             }
             catch (JSONException js){
@@ -246,4 +162,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+    public static class MyAlarmReceiver extends BroadcastReceiver {
+
+        public  MyAlarmReceiver()
+        {
+            super();
+        }
+
+        //Cuando reciba respuesta de la alarma, se ejecutará el PUT para refrescar el Token
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String uri= intent.getStringExtra("uri");
+            String token_refresh = intent.getStringExtra("refresh");
+            Intent  putService = new Intent(context, ServicesHttp_PUT.class);
+            putService.putExtra("tokenPut_rfrsh",token_refresh);
+            putService.putExtra("urlPUT",uri);
+            context.startService(putService);
+        }
+    }
+
 }
