@@ -77,10 +77,11 @@ public class SignUpActivity extends AppCompatActivity {
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
                     if (networkInfo.isConnected()) {
-                        resultEditText.setText("Está conectado a internet");
+                        Toast.makeText(getApplicationContext(),"Está conectado a internet",Toast.LENGTH_LONG).show();
                         startService(signUpIntent);
                     } else {
-                        resultEditText.setText("No hay conexión a internet");
+                        Toast.makeText(getApplicationContext(),"No hay conexión a internet",Toast.LENGTH_LONG).show();
+
                     }
 
 

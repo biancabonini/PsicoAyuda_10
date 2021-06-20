@@ -8,6 +8,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -133,6 +135,9 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                     String descrip=Float.toString (event.values[2]);
                     JSONObject RegistarEvtJson = new JSONObject();
                     try {
+
+
+
                         RegistarEvtJson.put("env", environment);
                         RegistarEvtJson.put("type_events",typeEvent);
                         RegistarEvtJson.put("description", descrip);
@@ -140,7 +145,18 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                         RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
                         RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
                         RegistrarEvento.putExtra("action", action);
-                        startService(RegistrarEvento);
+
+                        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        if (networkInfo.isConnected()) {
+
+                            Toast.makeText(PreguntasActivity.this, "Está conectado a internet", Toast.LENGTH_SHORT).show();
+                            startService(RegistrarEvento);
+                        }
+                        else{
+                            Toast.makeText(PreguntasActivity.this, "No está conectado a internet", Toast.LENGTH_SHORT).show();
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
