@@ -33,6 +33,7 @@ public class SignUpActivity extends AppCompatActivity {
     public String resultado;
     public String token;
     private static final String action = "RESPUESTA_OPERACION";
+    public String tokenRefresh;
 
 
     @Override
@@ -104,41 +105,38 @@ public class SignUpActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent){
             try
             {
+                String tipo = intent.getStringExtra("tipo");
                 resultEditText = (TextView) findViewById(R.id.txtResultado);
                 String datosJSON = intent.getStringExtra("datosJson");
                 JSONObject datosJson = new JSONObject(datosJSON);
+                if(tipo.equals("POST")){
+                    resultEditText.setText(datosJSON);
+                    token = datosJson.getString("token");
+                    resultado = datosJson.getString("success");
+                    if (resultado == "true")
+                    {
+                        Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
+                        Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
+                        startActivity(loginIntent);
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                    }
 
-                resultEditText.setText(datosJSON);
-                //Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
-                token = datosJson.getString("token");
-                resultado = datosJson.getString("success");
-                //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+                }
+                else{
+                    if (resultado == "true")
+                    {
+                        Toast.makeText(getApplicationContext(),"Se ha refrescado el token correctamente",Toast.LENGTH_LONG).show();
+                        token = datosJson.getString("token");
+                        tokenRefresh = datosJson.getString("token");
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"No se ha refrescado el token",Toast.LENGTH_LONG).show();
+                    }
 
-                /*if (resultado == "true")
-                {
-                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
-                }
-                if (resultado == "true") {*/
-                    /*Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    loginIntent.putExtra("token", token);
-                    startActivity(loginIntent);
-                Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(loginIntent);*/
-                //}
-                if (resultado == "true")
-                {
-                    Toast.makeText(getApplicationContext(),"Se ha registrado correctamente",Toast.LENGTH_LONG).show();
-                    Intent loginIntent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(loginIntent);
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
                 }
 
             }

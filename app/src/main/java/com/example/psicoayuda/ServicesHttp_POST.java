@@ -66,6 +66,7 @@ public class ServicesHttp_POST extends IntentService {
         }
 
         Intent i = new Intent(action);
+        i.putExtra("tipo","POST");
         i.putExtra("datosJson",result);
         sendBroadcast(i);
 

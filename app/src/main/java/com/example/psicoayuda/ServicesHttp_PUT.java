@@ -54,7 +54,8 @@ public class ServicesHttp_PUT extends IntentService {
         }
 
         Intent i = new Intent("com.example.psicoayuda.intent.action.TOKEN_REFRESH");
-        i.putExtra("respuesta",result);
+        i.putExtra("tipo","PUT");
+        i.putExtra("datosJson",result);
         sendBroadcast(i);
 
     }

@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         configurarBroadcastReceiver();
+        configurarBroadcastReceiverAlarm();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +124,11 @@ public class LoginActivity extends AppCompatActivity {
         registerReceiver(receiver,filter);
     }
 
+    private void configurarBroadcastReceiverAlarm(){
+        filter = new IntentFilter("com.example.psicoayuda.intent.action.TOKEN_REFRESH");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(receiver,filter);
+    }
 
     private class Receptor extends BroadcastReceiver
     {
@@ -130,30 +136,39 @@ public class LoginActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent){
             try
             {
+                String tipo = intent.getStringExtra("tipo");
                 resultEditText = (TextView) findViewById(R.id.txtResultado2);
                 String datosJSON = intent.getStringExtra("datosJson");
                 JSONObject datosJson = new JSONObject(datosJSON);
-
+                String resultado = datosJson.getString("success");
                 resultEditText.setText(datosJSON);
                 Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
-                token = datosJson.getString("token");
-                String resultado = datosJson.getString("success");
-                token_refresh = datosJson.getString("token_refresh");
-                //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+                if(tipo.equals("POST")) {
+                    token = datosJson.getString("token");
+                    token_refresh = datosJson.getString("token_refresh");
 
-                if (resultado == "true")
-                {
-                    Toast.makeText(getApplicationContext(),"Se ha logueado correctamente",Toast.LENGTH_LONG).show();
-                    Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
-                    goToAppPrincipal.putExtra("token1", token);
-                    goToAppPrincipal.putExtra("email", email);
-                    goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
-                    startActivity(goToAppPrincipal);
+                    if (resultado == "true") {
+                        Toast.makeText(getApplicationContext(), "Se ha logueado correctamente", Toast.LENGTH_LONG).show();
+                        Intent goToAppPrincipal = new Intent(LoginActivity.this, com.example.psicoayuda.AppPrincipal.class);
+                        goToAppPrincipal.putExtra("token1", token);
+                        goToAppPrincipal.putExtra("email", email);
+                        goToAppPrincipal.putExtra("Token_rfrs", token_refresh);
+                        startActivity(goToAppPrincipal);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Ha ocurrido un error, espere y reintente", Toast.LENGTH_LONG).show();
+                    }
                 }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Ha ocurrido un error, espere y reintente",Toast.LENGTH_LONG).show();
+                else{
+                    if (resultado == "true")
+                    {
+                        Toast.makeText(getApplicationContext(),"Se ha refrescado el token correctamente",Toast.LENGTH_LONG).show();
+                        token = datosJson.getString("token");
+                        token_refresh = datosJson.getString("token");
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"No se ha refrescado el token",Toast.LENGTH_LONG).show();
+                    }
                 }
 
             }
