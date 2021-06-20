@@ -59,6 +59,8 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         giroscopio = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorManager.registerListener(this, giroscopio , 3000000);
+        //ver si con esa configuración funciona
+        //sensorManager.registerListener(this, giroscopio , sensorManager.SENSOR_DELAY_UI);
         contadorPreguntas = 0;
 
         pregunta.setText("pregunta");
