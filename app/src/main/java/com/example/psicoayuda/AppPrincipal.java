@@ -27,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class AppPrincipal extends AppCompatActivity implements SensorEventListener  {
@@ -38,10 +41,13 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
     boolean sacudido = false;
-    //private db = FirebaseFirestore.getinstance();
     public String email;
     public String tokenRefresh;
-
+    /////// /////// ///////
+    FirebaseFirestore db;
+    EditText asuntoText;
+    EditText descripcionText;
+    /////// /////// ///////
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
 
@@ -57,9 +63,11 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_principal);
-
-        final EditText asuntoText = findViewById(R.id.EditTextAsunto);
-        final EditText descripcionText = findViewById(R.id.EditTextDescripcion);
+        /////// /////// ///////
+        asuntoText = findViewById(R.id.EditTextAsunto);
+        descripcionText = findViewById(R.id.EditTextDescripcion);
+        db = FirebaseFirestore.getInstance();
+        /////// /////// ///////
         final Button enviarButton = findViewById(R.id.enviar);
         final TextView asunto_txtv = findViewById(R.id.asunto_txt);
         final TextView desc_txtv = findViewById(R.id.descripcion_txt);
@@ -118,29 +126,23 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
         btnSetup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                realizarPublicacion();
                 Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
-                //Insertar en Firebase la consulta publicada.
-          /*      db.collection ("users").document(asunto)(
-                        hashMapOf(
-                        "asunto" to asuntoText.text.toString(),
-                        "decripcion" to descripcionText.text.toString())
-
-
-            )*/
+                pasarAPreguntas();
             }
         });
-
-       /* if(sacudido){
-            Toast.makeText(AppPrincipal.this, "LLEGUEEEEE", Toast.LENGTH_SHORT).show();
-            //Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
-            //Intent intent = new Intent(AppPrincipal.this,SegundoActivity.class);
-            //startActivity(intent);
-            publicarConsulta(asunto, descripcion);
-        }*/
 
 
     }
 
+
+    void realizarPublicacion(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("asunto", asuntoText.getText().toString());
+        map.put("descripcion", descripcionText.getText().toString());
+        db.collection(email).document().set(map);
+
+    }
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
@@ -178,12 +180,9 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
                     editor.putString("Y", valorY);
                     editor.putString("Z", valorZ);
                     editor.commit();
+                    realizarPublicacion();
                     Toast.makeText(AppPrincipal.this, "Su consulta se ha publicado", Toast.LENGTH_SHORT).show();
-                    Intent intentPreguntas = new Intent(AppPrincipal.this,PreguntasActivity.class);
-                    intentPreguntas.putExtra("tokenPreg",token);
-                    intentPreguntas.putExtra("token_rfrsPreg",tokenRefresh);
-                    intentPreguntas.putExtra("mail",email);
-                    startActivity(intentPreguntas);
+                   pasarAPreguntas();
                 }
 
                 last_x = x;
@@ -192,7 +191,13 @@ public class AppPrincipal extends AppCompatActivity implements SensorEventListen
             }
         }
     }
-
+void pasarAPreguntas(){
+    Intent intentPreguntas = new Intent(AppPrincipal.this,PreguntasActivity.class);
+    intentPreguntas.putExtra("tokenPreg",token);
+    intentPreguntas.putExtra("token_rfrsPreg",tokenRefresh);
+    intentPreguntas.putExtra("mail",email);
+    startActivity(intentPreguntas);
+}
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 

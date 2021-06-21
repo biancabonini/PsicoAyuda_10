@@ -128,16 +128,13 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                 //Intent intent = new Intent(PreguntasActivity.this,AppPrincipal.class);
                 //startActivity(intent);
             }else{
-                if((event.values[2]) > 0.5f) { // anticlockwise
+                if((event.values[2]) > 0.5f) {
                     respuesta="Si";
                     pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
                     contadorPreguntas++;
                     String descrip=Float.toString (event.values[2]);
                     JSONObject RegistarEvtJson = new JSONObject();
                     try {
-
-
-
                         RegistarEvtJson.put("env", environment);
                         RegistarEvtJson.put("type_events",typeEvent);
                         RegistarEvtJson.put("description", descrip);
@@ -160,7 +157,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else if((event.values[0]) < -0.5f) { // clockwise
+                } else if((event.values[0]) < -0.5f) {
                     respuesta="No";
                     pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
                     contadorPreguntas++;

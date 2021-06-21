@@ -1,0 +1,77 @@
+[33mcommit 1c3099e577cd3c8cf605396fbaeb69b4a0ae5003[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Ariana <arcar1998@hotmail.com>
+Date:   Fri Jun 18 19:37:42 2021 -0300
+
+    se mejora la navegación entre activities, se pasa a ambiente PROD
+
+[33mcommit ce24afc672af3abebba2cd709a5f512c7258959e[m
+Author: matpereira <matiaspereira@outlook.com>
+Date:   Fri Jun 18 15:48:15 2021 -0300
+
+    Conexion firebase
+
+[33mcommit ad1f036c7d1831159461ad1d9b41ecd42e5a1960[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Thu Jun 17 19:29:23 2021 -0300
+
+    se agregan correcciones para que corra con lo implementado de Firebase
+
+[33mcommit 40e4dd0078e442c19ebf5d6484f4bff8311ad3f2[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Wed Jun 16 00:33:37 2021 -0300
+
+    se realizo conexion a FireBase
+
+[33mcommit c4c1520f0d592dda371c1b05d16be517f5aec8c6[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Tue Jun 15 23:45:03 2021 -0300
+
+    se agrego activity de preguntas, manejo de sensor giroscopio y acelerometro
+
+[33mcommit 2ab39ad3a7ee09b19368ccc525f23bd393660fdd[m
+Author: Ariana <arcar1998@hotmail.com>
+Date:   Tue Jun 15 20:53:12 2021 -0300
+
+    Se modifican cuestiones visuales, se agrega activity de la app principal, otros cambios
+
+[33mcommit 6c2f52af429669a893f3b71c3b394828ca624e64[m
+Author: Ariana <arcar1998@hotmail.com>
+Date:   Sun Jun 13 21:26:39 2021 -0300
+
+    Se agrega activity para registrar usuario, se modifica http_post
+
+[33mcommit c5a0a151c3fde61235d500f5f4be1469b999e131[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Sat Jun 12 18:25:52 2021 -0300
+
+    se agrega activity de patron, activity de login, algo de codigo de httpPost
+
+[33mcommit 3519ca296de4816cb6e66136616d1aba9b41d7e4[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Sat Jun 12 01:52:32 2021 -0300
+
+    Update MainActivity.java
+
+[33mcommit ff72d2a218699fcc04a3e44dfc21708d5ad59c5a[m
+Author: matpereira <matiaspereira@outlook.com>
+Date:   Sat Jun 12 01:27:04 2021 -0300
+
+    a dormir
+
+[33mcommit 5e56098d74381d54c6385a271f3ffebb1f06f84b[m
+Author: matpereira <matiaspereira@outlook.com>
+Date:   Sat Jun 12 01:12:59 2021 -0300
+
+    mensaje con lo que agregaste
+
+[33mcommit b37e9bd7b60c98244f94712a6edcfd762cdf4961[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Sat Jun 12 01:08:44 2021 -0300
+
+    se agrego cambio entre activities
+
+[33mcommit df5148fbce237727ec47ecfc10f6edc39ce92853[m
+Author: biancabonini <biaanbonini@gmail.com>
+Date:   Fri Jun 11 23:37:07 2021 -0300
+
+    version 1.0
