@@ -170,10 +170,6 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
                 Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
                 String resultado = datosJson.getString("success");
                 if(tipo.equals("POST")){
-                    String tokenResponse = datosJson.getString("token");
-                    String token_refresh = datosJson.getString("token_refresh");
-                    //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
-                    //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
 
                     if (resultado == "true")
                     {
