@@ -51,6 +51,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
     String token;
     String email;
     String tokenRefresh;
+    int flag = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,9 +93,10 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
 
 
             if(contadorPreguntas>2){
-                Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(PreguntasActivity.this,AppPrincipal.class);
-                //startActivity(intent);
+                if(flag == 0) {
+                    Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
+                    flag = 1;
+                }
             }else{
                 pregunta.setText(preguntas[contadorPreguntas]);
                 if((event.values[2]) > 0.5f) {
