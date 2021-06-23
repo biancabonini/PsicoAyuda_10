@@ -51,7 +51,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
     String token;
     String email;
     String tokenRefresh;
-    int flag = 0;
+    int flag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +68,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
         sensorManager.registerListener(this, giroscopio , 3000000);
 
         contadorPreguntas = 0;
+        flag = 0;
 
         pregunta.setText(preguntas[contadorPreguntas]);
 
@@ -95,6 +96,8 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
             if(contadorPreguntas>2){
                 if(flag == 0) {
                     Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
+                    pregunta.setText(" ");
+                    resultado.setText("Respondiste todas las preguntas");
                     flag = 1;
                 }
             }else{
