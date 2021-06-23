@@ -42,12 +42,15 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
     private TextView resultEditText;
     private String action = "REGISTRAR_EVENTO";
 
-    String preguntas[] = {"pregunta1","pregunta2","pregunta3"};
+    String preguntas[] = {"¿Recibiste ayuda psicológica alguna vez?","¿Estas siendo atentido por algún psicologo?","¿Te interesa ser contactado para resolver tu consulta?"};
     private TextView leyenda;
     private TextView pregunta;
     private TextView resultado;
+    private TextView resultServer;
     float lastZ=0;
-
+    String token;
+    String email;
+    String tokenRefresh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
         leyenda = findViewById(R.id.leyenda);
         pregunta = findViewById(R.id.pregunta);
         resultado = findViewById(R.id.txtResultado);
+        resultServer = findViewById(R.id.txtRespuestaServer);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         giroscopio = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -64,12 +68,83 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
 
         contadorPreguntas = 0;
 
-        pregunta.setText("pregunta");
+        pregunta.setText(preguntas[contadorPreguntas]);
 
         configurarBroadcastReceiver();
 
+        Intent intentAppPrincipal = getIntent();
+
+        token = intentAppPrincipal.getExtras().getString("tokenPreg");
+        tokenRefresh = intentAppPrincipal.getExtras().getString("token_rfrsPreg");
+        email = intentAppPrincipal.getExtras().getString("mail");
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        String descrip;
+        Sensor mySensor = event.sensor;
+
+        if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
 
 
+            if(contadorPreguntas>2){
+                Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
+                //Intent intent = new Intent(PreguntasActivity.this,AppPrincipal.class);
+                //startActivity(intent);
+            }else{
+                pregunta.setText(preguntas[contadorPreguntas]);
+                if((event.values[2]) > 0.5f) {
+                    respuesta="SI";
+                    resultado.setText("Tu respuesta fue " + respuesta);
+                    contadorPreguntas++;
+                    descrip=Float.toString (event.values[2]);
+                    registrarEvento(descrip);
+                } else if((event.values[0]) < -0.5f) {
+                    respuesta="NO";
+                    resultado.setText("Tu respuesta fue " + respuesta);
+                    contadorPreguntas++;
+                    descrip=Float.toString (event.values[0]);
+                    registrarEvento(descrip);
+                }
+            }
+
+        }
+    }
+
+    void registrarEvento(String valor){
+        JSONObject RegistarEvtJson = new JSONObject();
+        try {
+            RegistarEvtJson.put("env", environment);
+            RegistarEvtJson.put("type_events",typeEvent);
+            RegistarEvtJson.put("description", valor);
+            Intent RegistrarEvento = new Intent(PreguntasActivity.this, ServicesHttp_POST.class);
+            RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
+            RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
+            RegistrarEvento.putExtra("action", action);
+            RegistrarEvento.putExtra("tokenAP", token);
+
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo.isConnected()) {
+
+                Toast.makeText(PreguntasActivity.this, "Está conectado a internet", Toast.LENGTH_SHORT).show();
+                startService(RegistrarEvento);
+            }
+            else{
+                Toast.makeText(PreguntasActivity.this, "No está conectado a internet", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
@@ -85,93 +160,46 @@ public class PreguntasActivity extends AppCompatActivity implements SensorEventL
         public void onReceive(Context context, Intent intent){
             try
             {
-                resultEditText = (TextView) findViewById(R.id.txtResultado);
+                String tipo = intent.getStringExtra("tipo");
+                resultServer = (TextView) findViewById(R.id.txtRespuestaServer);
                 String datosJSON = intent.getStringExtra("datosJson");
                 JSONObject datosJson = new JSONObject(datosJSON);
-
-                resultEditText.setText(datosJSON);
+                resultServer.setText(datosJSON);
                 Toast.makeText(getApplicationContext(),"Se recibió la respuesta del server",Toast.LENGTH_LONG).show();
-                String token = datosJson.getString("token");
                 String resultado = datosJson.getString("success");
-                String token_refresh = datosJson.getString("token_refresh");
-                //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+                if(tipo.equals("POST")){
+                    String tokenResponse = datosJson.getString("token");
+                    String token_refresh = datosJson.getString("token_refresh");
+                    //Toast.makeText(getApplicationContext(),token,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
 
-                if (resultado == "true")
-                {
-                    Toast.makeText(getApplicationContext(),"Se registró la lectura correctamente",Toast.LENGTH_LONG).show();
+                    if (resultado == "true")
+                    {
+                        Toast.makeText(getApplicationContext(),"Se registró la lectura correctamente",Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"No se registró la lectura correctamente",Toast.LENGTH_LONG).show();
+                    }
                 }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"No se registró la lectura correctamente",Toast.LENGTH_LONG).show();
-                }
+                else {
+                    if (resultado == "true")
+                    {
+                        Toast.makeText(getApplicationContext(),"Se ha refrescado el token correctamente",Toast.LENGTH_LONG).show();
+                        token = datosJson.getString("token");
+                        tokenRefresh = datosJson.getString("token");
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"No se ha refrescado el token",Toast.LENGTH_LONG).show();
+                    }
 
+                }
             }
             catch (JSONException js){
                 js.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        Sensor mySensor = event.sensor;
-
-        if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-
-            if(contadorPreguntas>2){
-                Toast.makeText(PreguntasActivity.this, "Respondiste todas las preguntas", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(PreguntasActivity.this,AppPrincipal.class);
-                //startActivity(intent);
-            }else{
-                if((event.values[2]) > 0.5f) {
-                    respuesta="Si";
-                    pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
-                    contadorPreguntas++;
-                    String descrip=Float.toString (event.values[2]);
-                    JSONObject RegistarEvtJson = new JSONObject();
-                    try {
-                        RegistarEvtJson.put("env", environment);
-                        RegistarEvtJson.put("type_events",typeEvent);
-                        RegistarEvtJson.put("description", descrip);
-                        Intent RegistrarEvento = new Intent(PreguntasActivity.this, ServicesHttp_POST.class);
-                        RegistrarEvento.putExtra("url", URL_REGISTRAR_EVENTO);
-                        RegistrarEvento.putExtra("datosJson", RegistarEvtJson.toString());
-                        RegistrarEvento.putExtra("action", action);
-
-                        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                        if (networkInfo.isConnected()) {
-
-                            Toast.makeText(PreguntasActivity.this, "Está conectado a internet", Toast.LENGTH_SHORT).show();
-                            startService(RegistrarEvento);
-                        }
-                        else{
-                            Toast.makeText(PreguntasActivity.this, "No está conectado a internet", Toast.LENGTH_SHORT).show();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else if((event.values[0]) < -0.5f) {
-                    respuesta="No";
-                    pregunta.setText("Tu respuesta fue" + preguntas[contadorPreguntas]);
-                    contadorPreguntas++;
-                }
-                resultado.setText(respuesta);
-            }
-
-        }
-    }
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
     public static class MyAlarmReceiver extends BroadcastReceiver {
 
